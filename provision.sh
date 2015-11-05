@@ -26,7 +26,7 @@ apt-get install --yes --force-yes xnest
 
 echo 'Updating android sdk...'
 function accept { while : ; do sleep 5 ; echo ${1:-y} ; done ; }
-accept | android update sdk --filter tools,platform-tools,build-tools-23,android-23,extra-android-support,sys-img-armeabi-v7a-android-23 --no-ui
+accept | android update sdk --filter tools,platform-tools,build-tools-23,android-23,extra-android-support,sys-img-armeabi-v7a-android-23 --no-ui --all --force
 
 echo 'Creating avd...'
 accept 'no' | android create avd --name default --abi default/armeabi-v7a --target 1 --force

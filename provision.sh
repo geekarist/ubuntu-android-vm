@@ -22,13 +22,24 @@ apt-get update
 apt-get install --yes --force-yes openjdk-7-jdk
 apt-get install --yes --force-yes lib32z1 lib32ncurses5 lib32stdc++6
 apt-get install --yes --force-yes qemu-kvm
+apt-get install --yes --force-yes xnest
 
 echo 'Updating android sdk...'
-function accept { while : ; do echo ${1:-y} ; sleep 1 ; done ; }
-accept | android update sdk --filter tools,platform-tools,build-tools-23,android-23,extra-android-support,sys-img-armeabi-v7a-android-23 --all --no-ui
+function accept { while : ; do sleep 5 ; echo ${1:-y} ; done ; }
+accept | android update sdk --filter tools,platform-tools,build-tools-23,android-23,extra-android-support,sys-img-armeabi-v7a-android-23 --no-ui
 
 echo 'Creating avd...'
-accept no | android create avd --name default --abi default/armeabi-v7a --target 1
+accept 'no' | android create avd --name default --abi default/armeabi-v7a --target 1 --force
 
 echo 'Fixing permissions...'
 chown --recursive vagrant:vagrant ~vagrant
+
+echo 'Setting up emulator in rc.local...'
+sed -i 's/exit 0//g' /etc/rc.local
+cat >> /etc/rc.local << EOF
+$ANDROID_HOME/tools/emulator -avd default -no-window -no-audio &
+exit 0
+EOF
+
+echo 'Starting emulator...'
+$ANDROID_HOME/tools/emulator -avd default -no-window -no-audio &
